@@ -19,10 +19,9 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/ma
 RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
     mkdir -p /opt/sonatype/nexus && \
     curl -sSL --retry 3 https://download.sonatype.com/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz | tar -C /opt/sonatype/nexus -xvz --strip-components=1 nexus-${NEXUS_VERSION} && \
-    chown -R root:root /opt/sonatype/nexus && \
     addgroup -S nexus && \
     adduser -G nexus -h ${NEXUS_DATA} -SD nexus && \
-    chown -R nexus:nexus /nexus-data && \
+    chown -R nexus:nexus /nexus-data /opt/sonatype/nexus && \
     chmod -R 755 /nexus-data && \
     sed \
     -e "s|karaf.home=.|karaf.home=/opt/sonatype/nexus|g" \

@@ -32,7 +32,7 @@ RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
     -e "s|java.io.tmpdir=data/tmp|java.io.tmpdir=${NEXUS_DATA}/tmp|g" \
     -i /opt/sonatype/nexus/bin/nexus.vmoptions
 
-EXPOSE 8081
+EXPOSE 8081 5000
 
 USER nexus
 

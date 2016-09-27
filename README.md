@@ -13,7 +13,7 @@ docker run -d -p 8081:8081 --name nexus3 serverking/nexus3
 
 ```
 Username: admin
-Password: admin123
+Password: admin
 ```
 
 ## Configuration

@@ -12,7 +12,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/ma
     apk add --no-cache --repository  http://dl-cdn.alpinelinux.org/alpine/edge/community && \
     apk update && \
     apk upgrade && \
-    apk add ca-certificates openjdk8 bash curl tar && \
+    apk add ca-certificates supervisor openjdk8 bash curl tar && \
     rm -rf /var/cache/apk/*
 
 # Nexus
@@ -21,8 +21,8 @@ RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
     curl -sSL --retry 3 https://download.sonatype.com/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz | tar -C /opt/sonatype/nexus -xvz --strip-components=1 nexus-${NEXUS_VERSION} && \
     addgroup -S nexus && \
     adduser -G nexus -h ${NEXUS_DATA} -SD nexus && \
-    chown -R nexus:nexus /nexus-data /opt/sonatype/nexus && \
-    chmod -R 755 /nexus-data && \
+    chmod -R +x /usr/local/bin && \
+    chown -R nexus:nexus /opt/sonatype/nexus && \
     sed \
     -e "s|karaf.home=.|karaf.home=/opt/sonatype/nexus|g" \
     -e "s|karaf.base=.|karaf.base=/opt/sonatype/nexus|g" \
@@ -38,4 +38,4 @@ USER nexus
 
 WORKDIR /opt/sonatype/nexus
 
-CMD bin/nexus run
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

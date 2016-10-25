@@ -22,6 +22,7 @@ For your convenience use docker compose to start nexus as shown below:
       - VIRTUAL_HTTP_PORT=8081
       - DOCKER_REPOSITORY_NAME=default
       - DOCKER_REPOSITORY_PORT=5000
+      - NEXUS_DEFAULT_PASSWORD=admin123
       - NEXUS_PASSWORD=changeme
     ports:
       - 5000:5000

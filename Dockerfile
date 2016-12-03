@@ -1,8 +1,8 @@
-
 FROM alpine:latest
+ARG TAG
+LABEL TAG=${TAG}
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
-ENV NEXUS_CONTEXT ""
 ENV NEXUS_DATA /nexus-data
 ENV NEXUS_VERSION 3.0.2-02
 
@@ -32,16 +32,11 @@ RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
     -e "s|java.util.logging.config.file=etc|java.util.logging.config.file=/opt/sonatype/nexus/etc|g" \
     -e "s|karaf.data=data|karaf.data=${NEXUS_DATA}|g" \
     -e "s|java.io.tmpdir=data/tmp|java.io.tmpdir=${NEXUS_DATA}/tmp|g" \
-    -i /opt/sonatype/nexus/bin/nexus.vmoptions && \
-    sed \
-    -e "s|nexus-context-path=/|nexus-context-path=/\${NEXUS_CONTEXT}|g" \
-    -i /opt/sonatype/nexus/etc/org.sonatype.nexus.cfg
+    -i /opt/sonatype/nexus/bin/nexus.vmoptions
 
 EXPOSE 8081 5000
 
 USER nexus
-
-VOLUME ${NEXUS_DATA}
 
 WORKDIR /opt/sonatype/nexus
 

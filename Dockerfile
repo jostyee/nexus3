@@ -1,6 +1,4 @@
 FROM alpine:latest
-ARG TAG
-LABEL TAG=${TAG}
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
 ENV NEXUS_DATA /nexus-data
@@ -10,7 +8,8 @@ ENV NEXUS_VERSION 3.0.2-02
 ADD src /
 
 # Packages
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main && \
+RUN set -ex && \
+    apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main && \
     apk add --no-cache --repository  http://dl-cdn.alpinelinux.org/alpine/edge/community && \
     apk update && \
     apk upgrade && \
@@ -18,7 +17,8 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/ma
     rm -rf /var/cache/apk/*
 
 # Nexus
-RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
+RUN set -ex && \
+    echo "Installing Nexus ${NEXUS_VERSION} ..." && \
     mkdir -p /opt/sonatype/nexus && \
     curl -sSL --retry 3 https://download.sonatype.com/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz | tar -C /opt/sonatype/nexus -xvz --strip-components=1 nexus-${NEXUS_VERSION} && \
     addgroup -S nexus && \
@@ -37,6 +37,8 @@ RUN echo "Installing Nexus ${NEXUS_VERSION} ..." && \
 EXPOSE 8081 5000
 
 USER nexus
+
+VOLUME /nexus-data
 
 WORKDIR /opt/sonatype/nexus
 

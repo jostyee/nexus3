@@ -4,16 +4,13 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
 ENV NEXUS_DATA /nexus-data
 ENV NEXUS_VERSION 3.0.2-02
 
-# Add local files and according directories to image
-ADD src /
-
 # Packages
 RUN set -ex && \
     apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main && \
     apk add --no-cache --repository  http://dl-cdn.alpinelinux.org/alpine/edge/community && \
     apk update && \
     apk upgrade && \
-    apk add ca-certificates supervisor openjdk8 bash curl tar && \
+    apk add ca-certificates openjdk8 bash curl tar && \
     rm -rf /var/cache/apk/*
 
 # Nexus
@@ -34,6 +31,9 @@ RUN set -ex && \
     -e "s|java.io.tmpdir=data/tmp|java.io.tmpdir=${NEXUS_DATA}/tmp|g" \
     -i /opt/sonatype/nexus/bin/nexus.vmoptions
 
+# Add local files and according directories to image
+ADD src /
+
 EXPOSE 8081 5000
 
 USER nexus
@@ -42,4 +42,5 @@ VOLUME /nexus-data
 
 WORKDIR /opt/sonatype/nexus
 
-ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["bin/nexus", "run"]

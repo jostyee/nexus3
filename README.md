@@ -13,7 +13,7 @@ docker run -d -p 8081:8081 -p 5000:5000 \
     -e DOCKER_REPOSITORY_PORT=5000 \
     -e NEXUS_DEFAULT_PASSWORD=admin123 \
     -e NEXUS_PASSWORD=changeme \
-    -v /tmp/vogel:/nexus-data \
+    -v /tmp/nexus3:/nexus-data \
     --name nexus3 serverking/nexus3
 ``` 
 
@@ -32,7 +32,7 @@ For your convenience use docker compose to start nexus as shown below:
       - 5000:5000
       - 8081:8081
     volumes:
-      - /data/nexus:/nexus-data
+      - /tmp/nexus3:/nexus-data
     restart: always
 ```
 

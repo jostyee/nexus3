@@ -5,15 +5,15 @@ Ready to go API configurable and extensible general purpose repository.
 A docker repository is not configured from scratch. To do so set the environment variables `DOCKER_REPOSITORY_NAME` and `DOCKER_REPOSITORY_PORT`.
 
 ## Getting started
-Please define your password, it will be changed on startup. The according default username is `admin`. Please refer to the official [API Docs](https://books.sonatype.com/nexus-book/reference3/scripting.html) Basically you can extend the API script located on `/usr/local/bin/entrypoint.sh` up to your requirements.
+Please define your password, it will be changed on startup. The according default username is `admin`. Please refer to the official [API Docs](https://books.sonatype.com/nexus-book/reference3/scripting.html). Basically you can extend the API script located on `/usr/local/bin/entrypoint.sh` up to your requirements.
 
 ```
 docker run -d -p 8081:8081 -p 5000:5000 \
     -e DOCKER_REPOSITORY_NAME=default \
     -e DOCKER_REPOSITORY_PORT=5000 \
     -e NEXUS_DEFAULT_PASSWORD=admin123 \
-    -e NEXUS_PASSWORD=changeme 
-    -v /tmp/vogel:/nexus-data 
+    -e NEXUS_PASSWORD=changeme \
+    -v /tmp/vogel:/nexus-data \
     --name nexus3 serverking/nexus3
 ``` 
 

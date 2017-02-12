@@ -1,9 +1,9 @@
 #!groovy
 
 def dockerImageName = env.JOB_NAME.substring(env.JOB_NAME.lastIndexOf('/') + 1)
-def dockerRegistry = 'http://localhost:5000'
-def dockerRepository = 'yourrepository'
-def dockerCredentialsId = 'docker'
+def dockerRegistry = 'http://localhost:yourrepoport'
+def dockerRepository = 'yourrepo'
+def dockerCredentialsId = 'yourrepouserid'
 
 node {
     stage('Checkout') {
@@ -11,10 +11,9 @@ node {
     }
 
     def dockerImageTag = sh(returnStdout: true, script: 'git describe --all').trim().replaceAll(/(.*\/)?(.+)/,'$2')
+    def pushAsLatest = (dockerImageTag ==~ /v(\d+.\d+.\d+)/)
 
     stage('Env') {
-        echo scm.branches[0].name
-
         echo "*** Show env variables: ***" + \
              "\n dockerRegistry: " + dockerRegistry + \
              "\n dockerRepository: " + dockerRepository + \
@@ -24,6 +23,7 @@ node {
     }
 
     stage('Build & Push') {
+
         docker.withRegistry(dockerRegistry, dockerCredentialsId) {
 
             // Set repository and image name
@@ -33,7 +33,7 @@ node {
             image.push(dockerImageTag)
 
             // Push latest tag if it's a release
-            if ((dockerImageTag ==~ /v(\d+.\d+.\d+)/)) {
+            if (pushAsLatest) {
                 image.push('latest')
             }
 

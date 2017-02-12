@@ -26,13 +26,16 @@
          curl -sf -X DELETE -u admin:${NEXUS_PASSWORD} "http://localhost:8081/service/siesta/rest/v1/script/changeadminemail"
       fi
 
-      # Create a docker (hosted) repository which will be used as a private docker registry
-      if [ -n "${DOCKER_REPOSITORY_NAME}" ] && [ -n "${DOCKER_REPOSITORY_PORT}" ];then
-         if [ $(curl -sf -o /dev/null -w "%{http_code}" -X GET -u admin:${NEXUS_PASSWORD} "http://localhost:${DOCKER_REPOSITORY_PORT}/v2/_catalog") -ne "200" ];then
-            curl -sf -X POST -u admin:${NEXUS_PASSWORD} --header "Content-Type: application/json" 'http://localhost:8081/service/siesta/rest/v1/script' -d "{\"name\":\"${DOCKER_REPOSITORY_NAME}\",\"type\":\"groovy\",\"content\":\"repository.createDockerHosted('${DOCKER_REPOSITORY_NAME}', ${DOCKER_REPOSITORY_PORT}, null, 'default', true, false)\"}"
-            curl -sf -X POST -u admin:${NEXUS_PASSWORD} --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/${DOCKER_REPOSITORY_NAME}/run"
-            curl -sf -X DELETE -u admin:${NEXUS_PASSWORD} "http://localhost:8081/service/siesta/rest/v1/script/${DOCKER_REPOSITORY_NAME}"
-         fi
+      # Create a docker (hosted) repositories which will be used as a private docker registry
+      if [ -n "${DOCKER_REPOSITORIES}" ];then
+         for REPOSITORY in ${DOCKER_REPOSITORIES}; do
+            echo "**** Setup docker repository with name ${REPOSITORY%:*} listening on port ${REPOSITORY#*:} ***"
+            if [ $(curl -sf -o /dev/null -w "%{http_code}" -X GET -u admin:${NEXUS_PASSWORD} "http://localhost:${REPOSITORY#:*}/v2/_catalog") -ne "200" ];then
+               curl -sf -X POST -u admin:${NEXUS_PASSWORD} --header "Content-Type: application/json" 'http://localhost:8081/service/siesta/rest/v1/script' -d "{\"name\":\"${REPOSITORY%:*}\",\"type\":\"groovy\",\"content\":\"repository.createDockerHosted('${REPOSITORY%:*}', ${REPOSITORY#*:}, null, 'default', true, false)\"}"
+               curl -sf -X POST -u admin:${NEXUS_PASSWORD} --header "Content-Type: text/plain" "http://localhost:8081/service/siesta/rest/v1/script/${REPOSITORY%:*}/run"
+               curl -sf -X DELETE -u admin:${NEXUS_PASSWORD} "http://localhost:8081/service/siesta/rest/v1/script/${REPOSITORY%:*}"
+            fi
+         done
       fi
    fi
 } &

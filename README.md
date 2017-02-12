@@ -2,19 +2,18 @@
 Ready to go API configurable and extensible general purpose repository.
 
 ## Docker Registry
-A docker repository is not configured from scratch. To do so set the environment variables `DOCKER_REPOSITORY_NAME` and `DOCKER_REPOSITORY_PORT`.
+A docker repository is not configured from scratch. You can setup multiple repositories using the environment variable `DOCKER_REPOSITORIES` as shown below.
 
 ## Getting started
 Please define your password, it will be changed on startup. The according default username is `admin`. Please refer to the official [API Docs](https://books.sonatype.com/nexus-book/reference3/scripting.html). Basically you can extend the API script located on `/usr/local/bin/entrypoint.sh` up to your requirements.
 
 ```
 docker run -d -p 8081:8081 -p 5000:5000 \
-    -e DOCKER_REPOSITORY_NAME=default \
-    -e DOCKER_REPOSITORY_PORT=5000 \
+    -e DOCKER_REPOSITORIES='default:5000 special:5001' \
     -e NEXUS_DEFAULT_PASSWORD=admin123 \
     -e NEXUS_PASSWORD=changeme \
     -v /tmp/nexus3:/nexus-data \
-    --name nexus3 serverking/nexus3
+    --name nexus3 flavioaiello/nexus3
 ``` 
 
 ### Docker compose 
@@ -22,10 +21,9 @@ For your convenience use docker compose to start nexus as shown below:
 
 ```
  nexus:
-    image: serverking/nexus3
+    image: flavioaiello/nexus3
     environment:
-      - DOCKER_REPOSITORY_NAME=default
-      - DOCKER_REPOSITORY_PORT=5000
+      - DOCKER_REPOSITORIES=default:5000 special:5001
       - NEXUS_DEFAULT_PASSWORD=admin123
       - NEXUS_PASSWORD=changeme
     ports:

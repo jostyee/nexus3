@@ -32,7 +32,7 @@ RUN set -ex && \
     -i /opt/sonatype/nexus/bin/nexus.vmoptions
 
 # Add local files and according directories to image
-ADD src /
+COPY files /
 
 EXPOSE 8081 5000
 
